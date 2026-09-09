@@ -1,9 +1,9 @@
-# Advanced Threat Emulation & SOC Detection Engineering Lab
+# Hybrid Network Attack & SOC Detection Lab
 
 ## 📌 Project Overview
-This project simulates a comprehensive 9-stage Advanced Persistent Threat (APT) attack (Red Team) across a hybrid Windows/Linux environment, followed by the development of custom detection rules using Splunk SIEM (Blue Team). 
+This project simulates a comprehensive 9-stage cyber attack (Red Team) across a hybrid Windows/Linux environment, followed by the development of custom detection rules using Splunk SIEM (Blue Team). 
 
-The objective is to demonstrate practical knowledge of the MITRE ATT&CK framework, adversary tradecraft, lateral movement, and proactive detection engineering (Threat Hunting) by building a complete logging and monitoring pipeline from scratch.
+The objective is to demonstrate practical application of the MITRE ATT&CK framework, adversary tradecraft, lateral movement, and proactive detection engineering (Threat Hunting) by building a logging and monitoring pipeline from scratch.
 
 ---
 
@@ -18,7 +18,7 @@ The environment consists of isolated virtual machines communicating over a custo
 * **Machine:** Windows Server (`10.10.30.20`)
 * **Role:** Initial compromise vector (Phishing/Malicious LNK).
 * **Data Telemetry & Log Sources:**
-  * **Sysmon (System Monitor):** Installed with a custom configuration file to monitor Process Creation (Event ID 1), Network Connections (Event ID 3), and Process Access/LSASS dumping (Event ID 10).
+  * **Sysmon (System Monitor):** Installed with a custom XML configuration file to monitor Process Creation (Event ID 1), Network Connections (Event ID 3), and Process Access/LSASS dumping (Event ID 10).
   * **Windows Event Logs:** Security logs and PowerShell operational logs (Script Block Logging enabled).
   * **Log Forwarding:** Splunk Universal Forwarder (UF) installed, configured to monitor `XmlWinEventLog:Microsoft-Windows-Sysmon/Operational` and forward to the SIEM via port `9997`.
 
@@ -26,9 +26,9 @@ The environment consists of isolated virtual machines communicating over a custo
 * **Machine:** Ubuntu Desktop (`10.10.30.30`)
 * **Role:** Target for lateral movement and simulated ransomware impact.
 * **Data Telemetry & Log Sources:**
-  * **Sysmon for Linux / Auditd:** Configured to monitor critical file modifications (e.g., `/etc/sudoers.d`) and process executions (e.g., `openssl`, `rm`).
+  * **Sysmon for Linux:** Deployed and configured via a custom XML rule file to monitor critical file modifications (e.g., `/etc/sudoers.d`) and process executions (e.g., `openssl`, `rm`).
   * **System Logs:** `/var/log/auth.log` monitored for SSH authentication events.
-  * **Log Forwarding:** Splunk Universal Forwarder (UF) deployed with `inputs.conf` forwarding local logs to the SIEM.
+  * **Log Forwarding:** Splunk Universal Forwarder (UF) deployed to forward Sysmon and internal authentication logs to the SIEM.
 
 ### 🟢 SOC / SIEM
 * **Machine:** Splunk Enterprise (Hosted on primary host/dedicated VM).
