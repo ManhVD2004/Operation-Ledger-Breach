@@ -1,20 +1,23 @@
 # Hybrid Network Attack & SOC Detection Lab
 
-## 📌 Project Overview
+## Project Overview
 This project simulates a comprehensive 9-stage cyber attack (Red Team) across a hybrid Windows/Linux environment, followed by the development of custom detection rules using Splunk SIEM (Blue Team). 
 
 The objective is to demonstrate practical application of the MITRE ATT&CK framework, adversary tradecraft, lateral movement, and proactive detection engineering (Threat Hunting) by building a logging and monitoring pipeline from scratch.
 
 ---
 
-## 🏗️ 1. Lab Architecture & Telemetry Setup
+## 1. Lab Architecture & Telemetry Setup
 The environment consists of isolated virtual machines communicating over a custom internal network (`10.10.30.0/24`). A centralized logging pipeline was established to ensure complete visibility of both Windows and Linux endpoint activities.
 
-### 🔴 Attacker Infrastructure
+### Network Topology & Data Flow
+![Network Topology](images/network-topology.png)
+
+### Attacker Infrastructure
 * **Machine:** Kali Linux (`10.10.30.10`)
 * **Role:** C2 Server, Payload Hosting (Python HTTP Server), Exfiltration Server (Impacket SMB).
 
-### 🔵 Victim 1: Initial Breach & Pivot
+### Victim 1: Initial Breach & Pivot
 * **Machine:** Windows Server (`10.10.30.20`)
 * **Role:** Initial compromise vector (Phishing/Malicious LNK).
 * **Data Telemetry & Log Sources:**
@@ -22,7 +25,7 @@ The environment consists of isolated virtual machines communicating over a custo
   * **Windows Event Logs:** Security logs and PowerShell operational logs (Script Block Logging enabled).
   * **Log Forwarding:** Splunk Universal Forwarder (UF) installed, configured to monitor `XmlWinEventLog:Microsoft-Windows-Sysmon/Operational` and forward to the SIEM via port `9997`.
 
-### 🔵 Victim 2: Target & Impact
+### Victim 2: Target & Impact
 * **Machine:** Ubuntu Desktop (`10.10.30.30`)
 * **Role:** Target for lateral movement and simulated ransomware impact.
 * **Data Telemetry & Log Sources:**
@@ -30,13 +33,13 @@ The environment consists of isolated virtual machines communicating over a custo
   * **System Logs:** `/var/log/auth.log` monitored for SSH authentication events.
   * **Log Forwarding:** Splunk Universal Forwarder (UF) deployed to forward Sysmon and internal authentication logs to the SIEM.
 
-### 🟢 SOC / SIEM
+### SOC / SIEM
 * **Machine:** Splunk Enterprise (Hosted on primary host/dedicated VM).
 * **Role:** Centralized log aggregation, indexing (`index=main`), and correlation. Configured with receiving port `9997` to accept telemetry from Universal Forwarders.
 
 ---
 
-## 🚀 2. Execution Workflow (Step-by-Step Demo)
+## 2. Execution Workflow (Step-by-Step Demo)
 To reproduce this lab and validate the detection rules, the simulation is executed in the following chronological phases:
 
 1. **Environment Preparation:** Boot all VMs. Verify Splunk is receiving data by running a basic `index=main` query.
@@ -46,7 +49,7 @@ To reproduce this lab and validate the detection rules, the simulation is execut
 
 ---
 
-## 🔴 3. Attack Emulation (Red Team Kill Chain)
+## 3. Attack Emulation (Red Team Kill Chain)
 
 ### Stage 1: Initial Access (T1204.002 - Malicious File)
 The attack begins with a weaponized Windows Shortcut (`.lnk`) file disguised as a legitimate document. The properties reveal a hidden PowerShell execution string (`-W Hidden`).
@@ -104,7 +107,7 @@ The attacker locates sensitive financial reports, encrypts them using `openssl` 
 
 ---
 
-## 🔵 4. Detection Engineering (Blue Team Splunk Rules)
+## 4. Detection Engineering (Blue Team Splunk Rules)
 
 Following the attack execution, custom SPL (Search Processing Language) queries were developed in Splunk to detect each stage of the attack lifecycle based on the ingested telemetry.
 
@@ -138,7 +141,7 @@ Following the attack execution, custom SPL (Search Processing Language) queries 
 
 ---
 
-## 💡 5. Detection Gaps & Recommendations
+## 5. Detection Gaps & Recommendations
 During the log analysis phase, a critical detection gap was identified:
 * **The Gap:** While the SIEM successfully detected the `sudoers.d` modification (Rule 6), it did not alert on the insertion of the SSH public key into `~/.ssh/authorized_keys` (Stage 8b). 
 * **Recommendation:** SOC teams should implement additional File Integrity Monitoring (FIM) or Sysmon Event ID 11 rules specifically targeting changes to `.ssh` directories across all endpoints. Relying solely on `auth.log` is insufficient for detecting persistence mechanisms established before authentication occurs.
