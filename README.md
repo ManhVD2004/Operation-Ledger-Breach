@@ -145,4 +145,4 @@ During the log analysis phase, a critical detection gap was identified:
 
 ---
 ## 📑 Incident Response Report
-For a detailed post-incident breakdown, IOCs, and eradication steps, please refer to the [Incident Response Report](incident-report.md).
+For a detailed post-incident breakdown, IOCs, and eradication steps, please refer to the [Incident Response Report](Incident-report.md).
