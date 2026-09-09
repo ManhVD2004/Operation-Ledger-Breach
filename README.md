@@ -72,7 +72,7 @@ Using ARP scanning, the attacker maps the internal network and identifies a seco
 ### Stage 6: Credential Access & Exfiltration (T1003.001 & T1041)
 The attacker dumps the LSASS process to extract plaintext credentials. To evade local EDR, the dump file is exfiltrated to the Kali machine for offline extraction.
 * **Ingress Tool Transfer:** Downloading `procdump.exe` using `certutil` from the attacker's HTTP server.
-![Kali HTTP Server](images/stage6a-kali-http-server.png)
+![Kali HTTP Server](images/stage6a-kali-httpserver.png)
 ![Certutil Download](images/stage6b-download-procdump.png)
 * **Execution:** Dumping LSASS.
 ![Execute Procdump](images/stage6c-execute-procdump.png)
