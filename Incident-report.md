@@ -3,7 +3,7 @@
 ## 📄 1. Incident Overview
 * **Incident ID:** IR-2026-0909-001
 * **Date of Detection:** September 9, 2026
-* **Reported By:** SOC Tier 2 Analyst / Detection Engineering Team
+* **Reported By:** SOC Tier 1 Analyst 
 * **Target Environment:** Hybrid Infrastructure (Windows Server & Ubuntu Linux)
 * **Incident Classification:** Critical (Data Encryption, Privilege Escalation, Lateral Movement)
 * **Status:** Contained & Eradicated
