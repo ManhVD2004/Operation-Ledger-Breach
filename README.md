@@ -147,5 +147,5 @@ During the log analysis phase, a critical detection gap was identified:
 * **Recommendation:** SOC teams should implement additional File Integrity Monitoring (FIM) or Sysmon Event ID 11 rules specifically targeting changes to `.ssh` directories across all endpoints. Relying solely on `auth.log` is insufficient for detecting persistence mechanisms established before authentication occurs.
 
 ---
-## 📑 Incident Response Report
+## Incident Response Report
 For a detailed post-incident breakdown, IOCs, and eradication steps, please refer to the [Incident Response Report](Incident-report.md).
