@@ -39,18 +39,14 @@ The environment consists of isolated virtual machines communicating over a custo
 ## 🚀 2. Execution Workflow (Step-by-Step Demo)
 To reproduce this lab and validate the detection rules, the simulation is executed in the following chronological phases:
 
-1. **Environment Preparation:** Boot all VMs. Verify Splunk is receiving data by running a basic `index=main` query. Disable Windows Defender on Victim 1 to allow the initial payload execution (simulating EDR bypass).
-2. **Attack Emulation (Red Team):** Execute stages 1 through 9 sequentially. Start with the malicious `.lnk` file on Windows, dump credentials, move laterally via SSH to Ubuntu, establish persistence, and execute the final ransomware simulation.
+1. **Environment Preparation:** Boot all VMs. Verify Splunk is receiving data by running a basic `index=main` query.
+2. **Attack Emulation (Red Team):** Execute stages 1 through 9 sequentially. Start with the malicious `.lnk` file on Windows to establish the initial C2 connection. Once the reverse shell is active, disable Windows Defender to prepare for tool dropping. Proceed to dump credentials, move laterally via SSH to Ubuntu, establish persistence, and execute the final ransomware simulation.
 3. **Log Ingestion & Delay:** Allow 2-3 minutes for the Universal Forwarders to push all generated Sysmon and Auth logs to the Splunk indexer.
 4. **Threat Hunting (Blue Team):** Utilize the custom Search Processing Language (SPL) queries (Rules 1-7) in Splunk to identify, correlate, and document the attack chain.
 
 ---
 
 ## 🔴 3. Attack Emulation (Red Team Kill Chain)
-
-### Preparation: Defense Evasion
-Windows Defender real-time protection was disabled to ensure payload execution without immediate quarantine, simulating an environment with bypassed or misconfigured AV.
-![Defense Evasion](images/disable-defender.png)
 
 ### Stage 1: Initial Access (T1204.002 - Malicious File)
 The attack begins with a weaponized Windows Shortcut (`.lnk`) file disguised as a legitimate document. The properties reveal a hidden PowerShell execution string (`-W Hidden`).
@@ -60,6 +56,10 @@ The attack begins with a weaponized Windows Shortcut (`.lnk`) file disguised as 
 The execution of the `.lnk` file triggers a PowerShell script that downloads a reverse shell payload from the Attacker's server and establishes a C2 connection back to `10.10.30.10`.
 ![Payload Script](images/stage2-payload-script.png)
 ![C2 Connection](images/stage3-c2-connection.png)
+
+### Post-Exploitation: Defense Evasion (T1562.001 - Impair Defenses)
+With the C2 session established, the attacker executes commands via the reverse shell to disable Windows Defender's real-time monitoring. This crucial step ensures that subsequent heavy operations (like downloading tools and memory dumping) will not be intercepted or quarantined by the local AV.
+![Defense Evasion](images/disable-defender.png)
 
 ### Stage 4: Windows Persistence & Privilege Escalation (T1136.001 & T1078.001)
 To maintain access, a hidden local administrator account named `WinUpdate$` is created and added to the `Administrators` group.
@@ -72,7 +72,7 @@ Using ARP scanning, the attacker maps the internal network and identifies a seco
 ### Stage 6: Credential Access & Exfiltration (T1003.001 & T1041)
 The attacker dumps the LSASS process to extract plaintext credentials. To evade local EDR, the dump file is exfiltrated to the Kali machine for offline extraction.
 * **Ingress Tool Transfer:** Downloading `procdump.exe` using `certutil` from the attacker's HTTP server.
-![Kali HTTP Server](images/stage6a-kali-httpserver.png)
+![Kali HTTP Server](images/stage6a-kali-http-server.png)
 ![Certutil Download](images/stage6b-download-procdump.png)
 * **Execution:** Dumping LSASS.
 ![Execute Procdump](images/stage6c-execute-procdump.png)
