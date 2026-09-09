@@ -142,3 +142,7 @@ Following the attack execution, custom SPL (Search Processing Language) queries 
 During the log analysis phase, a critical detection gap was identified:
 * **The Gap:** While the SIEM successfully detected the `sudoers.d` modification (Rule 6), it did not alert on the insertion of the SSH public key into `~/.ssh/authorized_keys` (Stage 8b). 
 * **Recommendation:** SOC teams should implement additional File Integrity Monitoring (FIM) or Sysmon Event ID 11 rules specifically targeting changes to `.ssh` directories across all endpoints. Relying solely on `auth.log` is insufficient for detecting persistence mechanisms established before authentication occurs.
+
+---
+## 📑 Incident Response Report
+For a detailed post-incident breakdown, IOCs, and eradication steps, please refer to the [Incident Response Report](incident-report.md).
